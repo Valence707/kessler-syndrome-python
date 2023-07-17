@@ -1,6 +1,9 @@
 to-do:
     > Make background move
     > Revamp graphics (reduce amount of particles, add better explosion effect)
+    > Add minimap
+    > Make huge 'stages'
+    > Revamp UI
 
 log:
 2023-6-30:

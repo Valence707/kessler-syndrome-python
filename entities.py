@@ -4,8 +4,10 @@ from gfx import *
 from constants import *
 
 class Asteroid(pygame.sprite.Sprite):
+    
     """ Asteroids are obstacles that the player shoots at and must avoid being hit by. They
         drift with set velocities and may break into smaller asteroids upon impact. """
+    
     def __init__(self, type='normal', pos=None, size=None, velocity=None, minVelocity=0.25):
         super().__init__()
         self.type, self.minVelocity = type, minVelocity
@@ -16,30 +18,21 @@ class Asteroid(pygame.sprite.Sprite):
         self.pos = [random.randrange(0, CONSTS['WIN_RES'][0]), random.randrange(0, CONSTS['WIN_RES'][1])] if not pos else pos
         self.velocity = [(random.random()-0.5)*4, (random.random()-0.5)*4] if not velocity else velocity
 
-        if self.velocity[0] < minVelocity and self.velocity[0] > -minVelocity:
-            self.velocity[0] += -minVelocity if self.velocity[0] < 0 else minVelocity
-        if self.velocity[1] < minVelocity and self.velocity[1] > -minVelocity:
-            self.velocity[1] += -minVelocity if self.velocity[1] < 0 else minVelocity
-
         self.health = 5 if randomSize > 70 else 3 if randomSize > 40 else 1
         self.maxHealth = self.health
         self.rotateAngle = 0
         self.rotateSpeed = random.randrange(-1, 2, 2)*random.random()*3
         self.spawnTime = 10000
-        self.startTime = pygame.time.get_ticks()
-
-        self.hBarBkgrnd = pygame.Surface((self.rect.width, 5))
-        self.hBar = pygame.Surface((self.rect.width, 5))
-        self.hBarRect = self.hBar.get_rect()
-        pygame.Surface.fill(self.hBar, (255, 0, 0))
-
+        self.start_time = pygame.time.get_ticks()
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
 
     def update(self):
-        self.pos[0], self.pos[1] = self.pos[0]+self.velocity[0], self.pos[1]+self.velocity[1]
+        self.pos[0] += self.velocity[0]
+        self.pos[1] += self.velocity[1]
 
         if self.pos[0] < -100 or self.pos[1] < -100 or self.pos[0] > CONSTS['WIN_RES'][0]+50 or self.pos[1] > CONSTS['WIN_RES'][1]+50:
             newPos = []
+
             while True:
                 newPos = [
                     random.randrange(-120, CONSTS['WIN_RES'][0]+120),
@@ -56,22 +49,21 @@ class Asteroid(pygame.sprite.Sprite):
             self.pos = newPos
 
         if options['particles_enabled']:
-            if self.health == 5 and (pygame.time.get_ticks() - self.startTime) % 100 >= 60:
+            if self.health == 5 and (pygame.time.get_ticks() - self.start_time) % 100 >= 60:
                 colorRange = random.randrange(75, 125)
                 randomParticleSize = random.randrange(3, 7)
                 gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
-            elif self.health == 3 and (pygame.time.get_ticks() - self.startTime) % 100 >= 70:
+            elif self.health == 3 and (pygame.time.get_ticks() - self.start_time) % 100 >= 70:
                 colorRange = random.randrange(75, 125)
                 randomParticleSize = random.randrange(2, 5)
                 gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
-            elif self.health == 1 and (pygame.time.get_ticks() - self.startTime) % 100 >= 80:
+            elif self.health == 1 and (pygame.time.get_ticks() - self.start_time) % 100 >= 80:
                 colorRange = random.randrange(75, 125)
                 randomParticleSize = random.randrange(1, 3)
                 gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
 
         self.rotateAngle += self.rotateSpeed
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-        self.hBarRect.x, self.hBarRect.y = self.pos[0], self.pos[1]-15
 
     def die(self):
         self.kill()
@@ -122,15 +114,14 @@ class Asteroid(pygame.sprite.Sprite):
             self.health -= amnt
             if self.health < 1:
                 self.die()
-            else:
-                self.hBar = pygame.transform.scale(self.hBar, (self.hBarRect.width*(self.health / self.maxHealth), self.hBarRect.height))
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.image, self.rotateAngle)
         gamevars['display'].blit(rotated_image, (self.rect.x-(rotated_image.get_rect().width - self.rect.width)/2, self.rect.y-(rotated_image.get_rect().height - self.rect.height)/2))
+        
         if self.health != self.maxHealth:
-            gamevars['display'].blit(self.hBarBkgrnd, (self.hBarRect.x, self.hBarRect.y))
-            gamevars['display'].blit(self.hBar, (self.hBarRect.x, self.hBarRect.y))
+            pygame.draw.rect(gamevars['display'], (0, 0, 0), (self.rect.x, self.rect.y-15, self.rect.width, 5))
+            pygame.draw.rect(gamevars['display'], (255, 0, 0), (self.rect.x, self.rect.y-15, self.rect.width*(self.health / self.maxHealth), 5))
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, origin, destination, image=None, size=[2, 2], velocity=15, spread=0, damage=1, color=(255, 255, 0), trailColor=(255, 255, 0), particleDensity=10, dieFunc = None, particles=False):
@@ -148,6 +139,7 @@ class Bullet(pygame.sprite.Sprite):
         self.pos = [origin[0], origin[1]]
         self.rect.x, self.rect.y = origin[0], origin[1]
         
+        # Calculate direction
         ds2mx = origin[0]-destination[0]
         ds2my = origin[1]-destination[1]
         self.direction = None
@@ -156,13 +148,16 @@ class Bullet(pygame.sprite.Sprite):
         except:
             return
 
-        self.direction.x += random.uniform(-spread, spread)
-        self.direction.y += random.uniform(-spread, spread)
-        self.startTime = pygame.time.get_ticks()
+        if spread > 0:
+            self.direction.x += random.uniform(-spread, spread)
+            self.direction.y += random.uniform(-spread, spread)
+
         ds2ml = math.sqrt(self.direction.x**2 + self.direction.y**2)
         self.rotateAngle = math.atan2(self.direction.x / ds2ml, self.direction.y / ds2ml) * 57.29578
         self.rotatedImage = pygame.transform.rotate(self.image, self.rotateAngle)
         self.rotatedPosOffset = [(self.rotatedImage.get_rect().width-self.rect.width)/2, (self.rotatedImage.get_rect().height - self.rect.height)/2]
+
+        self.start_time = pygame.time.get_ticks()
 
     def update(self):
         self.pos[0] += self.velocity * self.direction.x
@@ -216,7 +211,7 @@ class Player(pygame.sprite.Sprite):
         self.maxVelocity = 4
         self.rotateAngle = 0
         self.rotated_rect = [0, 0]
-        self.startTime = pygame.time.get_ticks()
+        self.start_time = pygame.time.get_ticks()
         self.mass = self.rect.width
         self.score = 0
         self.health = 10000

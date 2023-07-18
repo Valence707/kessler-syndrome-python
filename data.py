@@ -1,15 +1,10 @@
 import pygame, os
 
-CONSTS = {
-    'WIN_RES': (1200, 800),
-    'T_FPS': 60,
-}
-
 options = {
     'sound_enabled': True,
     'soundfx_volume': 0.15,
     'music_enabled': True,
-    'music_volume': 0.25,
+    'music_volume': 0,
     'particles_enabled': True,
 }
 
@@ -42,7 +37,8 @@ sprites = {
     'projectile_shotgun': pygame.image.load('res/images/projectile_shotgun.png').convert(),
     'projectile_machinegun': pygame.image.load('res/images/projectile_machinegun.png').convert(),
     'projectile_photongun': pygame.image.load('res/images/projectile_photongun.png').convert(),
-    'projectile_americanpride': pygame.image.load('res/images/projectile_americanpride.png').convert()
+    'projectile_americanpride': pygame.image.load('res/images/projectile_americanpride.png').convert(),
+    'overlay_test': pygame.image.load('res/images/overlaytest.png').convert()
 }
 
 for x in range(2):

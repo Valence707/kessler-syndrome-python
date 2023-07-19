@@ -1,7 +1,6 @@
 import pygame, math, random
 from data import *
 from gfx import *
-from constants import *
 
 class Asteroid(pygame.sprite.Sprite):
     
@@ -15,7 +14,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.mass = randomSize
         self.image = pygame.transform.scale(sprites['asteroids'][len(sprites['asteroids'])-1] if type == 'satellite' else sprites['asteroids'][random.randrange(0, len(sprites['asteroids'])-1)], (randomSize, randomSize))
         self.rect = self.image.get_rect()
-        self.pos = [random.randrange(0, CONSTS['WIN_RES'][0]), random.randrange(0, CONSTS['WIN_RES'][1])] if not pos else pos
+        self.pos = [random.randrange(0, options['win_res'][0]), random.randrange(0, options['win_res'][1])] if not pos else pos
         self.velocity = [(random.random()-0.5)*4, (random.random()-0.5)*4] if not velocity else velocity
 
         self.health = 5 if randomSize > 70 else 3 if randomSize > 40 else 1
@@ -30,15 +29,15 @@ class Asteroid(pygame.sprite.Sprite):
         self.pos[0] += self.velocity[0]
         self.pos[1] += self.velocity[1]
 
-        if self.pos[0] < -100 or self.pos[1] < -100 or self.pos[0] > CONSTS['WIN_RES'][0]+50 or self.pos[1] > CONSTS['WIN_RES'][1]+50:
+        if self.pos[0] < -100 or self.pos[1] < -100 or self.pos[0] > options['win_res'][0]+50 or self.pos[1] > options['win_res'][1]+50:
             newPos = []
 
             while True:
                 newPos = [
-                    random.randrange(-120, CONSTS['WIN_RES'][0]+120),
-                    random.randrange(-120, CONSTS['WIN_RES'][1]+120)
+                    random.randrange(-120, options['win_res'][0]+120),
+                    random.randrange(-120, options['win_res'][1]+120)
                 ]
-                if not (newPos[0] > -1*self.rect.width and newPos[0] < CONSTS['WIN_RES'][0]+self.rect.width and newPos[1] > -1*self.rect.height and newPos[1] < CONSTS['WIN_RES'][1]+self.rect.height):
+                if not (newPos[0] > -1*self.rect.width and newPos[0] < options['win_res'][0]+self.rect.width and newPos[1] > -1*self.rect.height and newPos[1] < options['win_res'][1]+self.rect.height):
                     self.velocity = [(random.random()-0.5)*4, (random.random()-0.5)*4]
                     if self.velocity[0] < self.minVelocity and self.velocity[0] > -self.minVelocity:
                         self.velocity[0] += -self.minVelocity if self.velocity[0] < 0 else self.minVelocity
@@ -180,16 +179,16 @@ class Bullet(pygame.sprite.Sprite):
 
         # Uncomment this for horrible chaos
         # if self.pos[0] < 0:
-        #     self.pos[0] = CONSTS['WIN_RES'][0]
-        # elif self.pos[0] > CONSTS['WIN_RES'][0]:
+        #     self.pos[0] = options['win_res'][0]
+        # elif self.pos[0] > options['win_res'][0]:
         #     self.pos[0] = 0
         
         # if self.pos[1] < 0:
-        #     self.pos[1] = CONSTS['WIN_RES'][1]
-        # elif self.pos[1] > CONSTS['WIN_RES'][1]:
+        #     self.pos[1] = options['win_res'][1]
+        # elif self.pos[1] > options['win_res'][1]:
         #     self.pos[1] = 0
 
-        if self.pos[0] < -120 or self.pos[1] < -120 or self.pos[0] > CONSTS['WIN_RES'][0] + 120 or self.pos[1] > CONSTS['WIN_RES'][1] + 120:
+        if self.pos[0] < -120 or self.pos[1] < -120 or self.pos[0] > options['win_res'][0] + 120 or self.pos[1] > options['win_res'][1] + 120:
             self.kill()
             del self
             return
@@ -205,7 +204,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image = sprites['player_ship']
         self.rect = self.image.get_rect()
-        self.pos = [CONSTS['WIN_RES'][0] / 2 - 15, CONSTS['WIN_RES'][1] / 2 - 15]
+        self.pos = [options['win_res'][0] / 2 - 15, options['win_res'][1] / 2 - 15]
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
         self.velocity = [0, 0]
         self.maxVelocity = 4
@@ -257,13 +256,13 @@ class Player(pygame.sprite.Sprite):
         self.pos[1] += self.velocity[1]
 
         if self.pos[0] < -25:
-            self.pos[0] = CONSTS['WIN_RES'][0]
-        elif self.pos[0] > CONSTS['WIN_RES'][0]:
+            self.pos[0] = options['win_res'][0]
+        elif self.pos[0] > options['win_res'][0]:
             self.pos[0] = -24
         
         if self.pos[1] < -25:
-            self.pos[1] = CONSTS['WIN_RES'][1]
-        elif self.pos[1] > CONSTS['WIN_RES'][1]:
+            self.pos[1] = options['win_res'][1]
+        elif self.pos[1] > options['win_res'][1]:
             self.pos[1] = -24
 
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]

@@ -1,5 +1,4 @@
 import pygame, random, os
-from constants import *
 
 # Initialize essential modules, objects, and data
 pygame.init()
@@ -46,7 +45,7 @@ for i in range(50):
 def main():
 
     run = True
-
+    init_start_screen()
     gamevars['last_song'] = 0
     gamevars['current_song'] = 0
     pygame.mixer.music.load(f'res/sounds/music/{music[gamevars["current_song"]]}')
@@ -54,7 +53,7 @@ def main():
 
     if options['particles_enabled']:
         for i in range(100):
-            gamevars['particles'].add(Particle((random.randrange(0, CONSTS['WIN_RES'][0]-10), random.randrange(0, CONSTS['WIN_RES'][1]-10)), size=[1, 1], color=(255, 255, 255), velocityRange=0.5, duration=random.random()*10))
+            gamevars['particles'].add(Particle((random.randrange(0, options['win_res'][0]-10), random.randrange(0, options['win_res'][1]-10)), size=[1, 1], color=(255, 255, 255), velocityRange=0.5, duration=random.random()*10))
 
     gamevars['last_paused'] = False
     gamevars['mouse_image'] = sprites['cursor2']
@@ -81,7 +80,8 @@ def main():
             'keys': pygame.key.get_pressed(),
             'mouse_pos': pygame.mouse.get_pos(),
             'mouse_pressed': pygame.mouse.get_pressed(3),
-            'current_time': pygame.time.get_ticks()
+            'current_time': pygame.time.get_ticks(),
+            'events': pygame.event.get()
         }
 
         # Quit game if 'q' is pressed. CHANGE!
@@ -90,7 +90,7 @@ def main():
             continue
 
         # Handle events
-        for event in pygame.event.get():
+        for event in frame_data['events']:
 
             # Quit game
             if event.type == pygame.QUIT:
@@ -117,9 +117,13 @@ def main():
         # Game over loop.
         elif gamevars['game_state'] == 'gameOver':
             game_over_menu(frame_data, gamevars['display'])
+
+        elif gamevars['game_state'] == 'testing':
+            testing_mode(frame_data)
         
         gamevars['display'].blit(gamevars['mouse_image'], (frame_data['mouse_pos'][0]-10, frame_data['mouse_pos'][1]-10))
+        pygame_widgets.update(frame_data['events'])
         pygame.display.flip()
-        gamevars['clock'].tick(CONSTS['T_FPS'])
+        gamevars['clock'].tick(options['target_fps'])
 
 main()

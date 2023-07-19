@@ -1,34 +1,36 @@
-import pygame, random
+import pygame, random, pygame_widgets
 from data import *
 from entities import *
+from pygame_widgets.button import Button
+
+def init_start_screen():
+    gamevars['test_button'] = Button(
+        gamevars['display'],
+        100,
+        100,
+        150,
+        50,
+        inactiveColour=(150, 0, 0),
+        pressedColour=(100, 0, 0),
+        hoverColour=(200, 0, 0),
+        text='test!',
+        onClick=print,
+        onClickParams=('test!')
+        )
+    
+    gamevars['test_button'].hide()
+
+def show_start_screen():
+    pass
+
+def hide_start_screen():
+    pass
+
+def destroy_start_screen():
+    pass
 
 def start_screen(f_dat, dest_surf):
-    dest_surf.blit(sprites['background'], (0, 0))
-    if len(gamevars['particles']) < 100:
-        gamevars['particles'].add(Particle((random.randrange(0, CONSTS['WIN_RES'][0]-10), random.randrange(0, CONSTS['WIN_RES'][1]-10)), size=[1, 1], color=(200, 200, 200), velocityRange=0.5, duration=random.random()*10))
-    gamevars['particles'].update()
-    gamevars['particles'].draw(dest_surf)
-    dest_surf.blit(sprites['asteroids'][0], (15, 35))
-    dest_surf.blit(sprites['asteroids'][1], (235, 65))
-    dest_surf.blit(sprites['asteroids'][2], (35, 230))
-    dest_surf.blit(sprites['asteroids'][3], (50, 135))
-    dest_surf.blit(sprites['asteroids'][4], (145, 600))
-    dest_surf.blit(pygame.transform.rotate(sprites['player_ship'], 45), (233, 212))
-
-    # Change opacity of buttons as player hovers over them.
-    for button in gamevars['start_screen_overlay'].buttons:
-        if button[1].collidepoint(f_dat['mouse_pos'][0], f_dat['mouse_pos'][1]):
-            button[0].set_alpha(100)
-        else:
-            button[0].set_alpha(0)
-
-    gamevars['start_screen_overlay'].draw()
-
-    # Detect and handle button presses.
-    if f_dat['mouse_pressed'][0]: 
-        if gamevars['start_screen_overlay'].buttons[0][1].collidepoint(f_dat['mouse_pos'][0], f_dat['mouse_pos'][1]):
-            gamevars['mouse_image'] = sprites['cursor1']
-            gamevars['game_state'] = 'game'
+    pass
 
 def game(f_dat):
     # Handle pausing the game
@@ -185,4 +187,5 @@ def draw_everything(dest_surf):
             particle.kill()
             del particle
 
-# def new_overlay(f_data):
+def testing_mode(f_data):
+    pass

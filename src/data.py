@@ -10,11 +10,33 @@ options = {
     'target_fps': 60,
 }
 
-gamevars = {
+# Important game data
+gvrs = {
     'american_colors': [(255, 0, 0), (255, 255, 255), (0, 0, 255)],
     'wave_timer': 0,
-    'game_state': 'testing'
+    'game_state': 'testing',
+    'start_screen_widgets': [],
+    'game_widgets': [],
+    'settings_widgets': [],
+    'waves': [
+        {'numAsteroids': 10, 'spawnRate': 100},
+        {'numAsteroids': 20, 'spawnRate': 85},
+        {'numAsteroids': 30, 'spawnRate': 70},
+        {'numAsteroids': 40, 'spawnRate': 55},
+        {'numAsteroids': 50, 'spawnRate': 40},
+    ],
+    'current_wave': 0,
+    'asteroids': pygame.sprite.Group(),
+    'bullets': pygame.sprite.Group(),
+    'particles': pygame.sprite.Group(),
+    'run': True,
+    'last_song': 0,
+    'current_song': 0,
+    'last_paused': False
 }
+
+for i in range(50):
+    gvrs['waves'].append({'numAsteroids': 50+(i*5), 'spawnRate': 40})
 
 # Fonts
 fonts = {
@@ -60,19 +82,5 @@ soundfx = {
 for i in range(10):
     soundfx[f'explosion_{i+1}'] = pygame.mixer.Sound(f'./res/sounds/explosion_{i+1}.wav')
 
-for i in sprites['asteroids']:
-    i.set_colorkey((0, 0, 0))
-
-for key in sprites:
-    if not key == 'asteroids' and not key == 'background':
-        sprites[key].set_colorkey((0, 0, 0))
-
 # Load music
 music = os.listdir(path='./res/sounds/music')
-
-# Change music volume
-pygame.mixer.music.set_volume(options['music_volume'])
-
-# Change volume of sounds
-for sound in soundfx:
-    soundfx[sound].set_volume(options['soundfx_volume'])

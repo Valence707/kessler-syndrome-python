@@ -51,32 +51,32 @@ class Asteroid(pygame.sprite.Sprite):
             if self.health == 5 and (pygame.time.get_ticks() - self.start_time) % 100 >= 60:
                 colorRange = random.randrange(75, 125)
                 randomParticleSize = random.randrange(3, 7)
-                gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
+                gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
             elif self.health == 3 and (pygame.time.get_ticks() - self.start_time) % 100 >= 70:
                 colorRange = random.randrange(75, 125)
                 randomParticleSize = random.randrange(2, 5)
-                gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
+                gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
             elif self.health == 1 and (pygame.time.get_ticks() - self.start_time) % 100 >= 80:
                 colorRange = random.randrange(75, 125)
                 randomParticleSize = random.randrange(1, 3)
-                gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
+                gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/2, colorRange/2), 0.25, 1))
 
         self.rotateAngle += self.rotateSpeed
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
 
     def die(self):
         self.kill()
-        gamevars['player'].score += 1
+        gvrs['player'].score += 1
 
         soundfx[f'explosion_{random.randrange(1, 11)}'].play()
-        gamevars['overlay'].update_text()
+        gvrs['overlay'].update_text()
 
         if self.type == 'satellite':
             if options['particles_enabled']:
                 for i in range(25):
                     colorRange = random.randrange(150, 255)
                     randomParticleSize = random.randrange(4, 10)
-                    gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange, colorRange/4), 2, (random.random()+0.1)*2))
+                    gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange, colorRange/4), 2, (random.random()+0.1)*2))
 
                 dropChance = random.randrange(0, 100)
         else:
@@ -84,27 +84,27 @@ class Asteroid(pygame.sprite.Sprite):
                 for i in range(10):
                     colorRange = random.randrange(75, 255)
                     randomParticleSize = random.randrange(4, 10)
-                    gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/3, colorRange/4), 2, (random.random()+0.1)*2))
+                    gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/3, colorRange/4), 2, (random.random()+0.1)*2))
 
             elif self.maxHealth == 3:
                 for i in range(random.randrange(2, 10)):
-                    gamevars['asteroids'].add(Asteroid(pos=[self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)], size=random.randrange(30, 40)))
+                    gvrs['asteroids'].add(Asteroid(pos=[self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)], size=random.randrange(30, 40)))
 
                 if options['particles_enabled']:
                     for i in range(30):
                         colorRange = random.randrange(75, 255)
                         randomParticleSize = random.randrange(4, 10)
-                        gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/3, colorRange/4), 2, (random.random()+0.1)*2))
+                        gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/3, colorRange/4), 2, (random.random()+0.1)*2))
 
             elif self.maxHealth == 5:
                 for i in range(random.randrange(3, 30)):
-                    gamevars['asteroids'].add(Asteroid(pos=[self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)], size=random.randrange(30, 40)))
+                    gvrs['asteroids'].add(Asteroid(pos=[self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)], size=random.randrange(30, 40)))
                     
                 if options['particles_enabled']:
                     for i in range(75):
                         colorRange = random.randrange(75, 255)
                         randomParticleSize = random.randrange(4, 10)
-                        gamevars['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/3, colorRange/4), 6, (random.random()+0.1)*2))
+                        gvrs['particles'].add(Particle((self.pos[0]+random.randrange(0, self.rect.width), self.pos[1]+random.randrange(0, self.rect.height)), [randomParticleSize, randomParticleSize], (colorRange, colorRange/3, colorRange/4), 6, (random.random()+0.1)*2))
 
         del self
         return
@@ -116,11 +116,11 @@ class Asteroid(pygame.sprite.Sprite):
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.image, self.rotateAngle)
-        gamevars['display'].blit(rotated_image, (self.rect.x-(rotated_image.get_rect().width - self.rect.width)/2, self.rect.y-(rotated_image.get_rect().height - self.rect.height)/2))
+        gvrs['display'].blit(rotated_image, (self.rect.x-(rotated_image.get_rect().width - self.rect.width)/2, self.rect.y-(rotated_image.get_rect().height - self.rect.height)/2))
         
         if self.health != self.maxHealth:
-            pygame.draw.rect(gamevars['display'], (0, 0, 0), (self.rect.x, self.rect.y-15, self.rect.width, 5))
-            pygame.draw.rect(gamevars['display'], (255, 0, 0), (self.rect.x, self.rect.y-15, self.rect.width*(self.health / self.maxHealth), 5))
+            pygame.draw.rect(gvrs['display'], (0, 0, 0), (self.rect.x, self.rect.y-15, self.rect.width, 5))
+            pygame.draw.rect(gvrs['display'], (255, 0, 0), (self.rect.x, self.rect.y-15, self.rect.width*(self.health / self.maxHealth), 5))
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, origin, destination, image=None, size=[2, 2], velocity=15, spread=0, damage=1, color=(255, 255, 0), trailColor=(255, 255, 0), particleDensity=10, dieFunc = None, particles=False):
@@ -163,7 +163,7 @@ class Bullet(pygame.sprite.Sprite):
         self.pos[1] += self.velocity * self.direction.y
         self.rect.x, self.rect.y = self.pos[0]-self.rect.width/2, self.pos[1]-self.rect.height/2
 
-        collided = pygame.sprite.spritecollideany(self, gamevars['asteroids'])
+        collided = pygame.sprite.spritecollideany(self, gvrs['asteroids'])
         if collided:
             collided.update_health(self.damage)
             self.kill()
@@ -172,7 +172,7 @@ class Bullet(pygame.sprite.Sprite):
 
             if options['particles_enabled'] and self.particles_enabled:
                 for i in range(10):
-                    gamevars['particles'].add(Particle(origin=self.pos, color=self.color, velocityRange=0.5, size=[1, 1], duration=random.random()*3+1))
+                    gvrs['particles'].add(Particle(origin=self.pos, color=self.color, velocityRange=0.5, size=[1, 1], duration=random.random()*3+1))
 
             del self
             return
@@ -194,10 +194,10 @@ class Bullet(pygame.sprite.Sprite):
             return
 
         if options['particles_enabled'] and self.particles_enabled and (pygame.time.get_ticks()) % 100 >= self.particleDensity:
-            gamevars['particles'].add(Particle(self.pos, duration=random.uniform(0.15, 0.3), velocityRange=0.5, color=self.trailColor))
+            gvrs['particles'].add(Particle(self.pos, duration=random.uniform(0.15, 0.3), velocityRange=0.5, color=self.trailColor))
 
     def draw(self):
-        gamevars['display'].blit(self.rotatedImage, (self.rect.x-self.rotatedPosOffset[0], self.rect.y-self.rotatedPosOffset[1]))
+        gvrs['display'].blit(self.rotatedImage, (self.rect.x-self.rotatedPosOffset[0], self.rect.y-self.rotatedPosOffset[1]))
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -250,7 +250,7 @@ class Player(pygame.sprite.Sprite):
             self.velocity[0] = self.velocity[0] - 0.1 if self.velocity[0] > 0 else self.velocity[0] + 0.1 if self.velocity[0] < 0 else 0 if self.velocity[0] < 0.1 and self.velocity[0] > -0.1 else 0
             self.velocity[1] = self.velocity[1] - 0.1 if self.velocity[1] > 0 else self.velocity[1] + 0.1 if self.velocity[1] < 0 else 0 if self.velocity[1] < 0.1 and self.velocity[1] > -0.1 else 0
             if options['particles_enabled']:
-                gamevars['particles'].add(Particle(gamevars['player'].rect.center, [1, 1], (255, 255, 255), 1))
+                gvrs['particles'].add(Particle(gvrs['player'].rect.center, [1, 1], (255, 255, 255), 1))
 
         self.pos[0] += self.velocity[0]
         self.pos[1] += self.velocity[1]
@@ -267,14 +267,14 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
 
-        collidedAsteroid = pygame.sprite.spritecollideany(self, gamevars['asteroids'])
+        collidedAsteroid = pygame.sprite.spritecollideany(self, gvrs['asteroids'])
         if collidedAsteroid:
             self.collisionTime = pygame.time.get_ticks()
             if pygame.time.get_ticks() - self.hitTime > 500:
                 self.health -= 10 if collidedAsteroid.mass > 75 else 5 if collidedAsteroid.mass > 25 else 1
                 self.hitTime = pygame.time.get_ticks()
 
-            gamevars['overlay'].update_player_healthbar()
+            gvrs['overlay'].update_player_healthbar()
             dx = abs(self.rect.centerx - collidedAsteroid.rect.centerx)
             dy = abs(self.rect.centery - collidedAsteroid.rect.centery)
             if dx > dy:
@@ -303,43 +303,43 @@ class Player(pygame.sprite.Sprite):
         self.weaponSelect += -event.y
         self.weaponSelect = 0 if self.weaponSelect+1 > len(self.weapons) else len(self.weapons)-1 if self.weaponSelect < 0 else self.weaponSelect
         self.shootTime = 0
-        gamevars['overlay'].update_text()
+        gvrs['overlay'].update_text()
 
     def draw(self):
         rotated_image = pygame.transform.rotate(self.image, self.rotateAngle)
         self.rotated_rect = rotated_image.get_rect()
-        gamevars['display'].blit(rotated_image, (self.rect.x-(self.rotated_rect.width - self.rect.width)/2, self.rect.y-(self.rotated_rect.height - self.rect.height)/2))
+        gvrs['display'].blit(rotated_image, (self.rect.x-(self.rotated_rect.width - self.rect.width)/2, self.rect.y-(self.rotated_rect.height - self.rect.height)/2))
 
 def standard_blaster_shoot(origin, destination):
-    gamevars['bullets'].add(Bullet(origin, destination, velocity=15, spread=0, image=sprites['projectile_blaster']))
+    gvrs['bullets'].add(Bullet(origin, destination, velocity=15, spread=0, image=sprites['projectile_blaster']))
     soundfx['blaster_shot'].play()
 
 def shotgun_shoot(origin, destination):
     for i in range(7):
-        gamevars['bullets'].add(Bullet(origin, [destination[0]+(i-5)*10, destination[1]+(i-5)*10], spread=0.15, image=sprites['projectile_blaster']))
+        gvrs['bullets'].add(Bullet(origin, [destination[0]+(i-5)*10, destination[1]+(i-5)*10], spread=0.15, image=sprites['projectile_blaster']))
     soundfx['shotgun_shot'].play()
 
 def photon_rifle_shoot(origin, destination):
-    gamevars['bullets'].add(Bullet(origin, destination, spread=0, size=[10, 10], velocity=25, damage=100, color=(100, 100, 255), trailColor=(100, 100, 255), image=sprites['projectile_photongun']))
+    gvrs['bullets'].add(Bullet(origin, destination, spread=0, size=[10, 10], velocity=25, damage=100, color=(100, 100, 255), trailColor=(100, 100, 255), image=sprites['projectile_photongun']))
     soundfx['photon_gun_shot'].play()
 
 def automatic_cannon_shoot(origin, destination):
-    gamevars['bullets'].add(Bullet(origin, destination, spread=0.15, size=[2, 2], velocity=15, damage=1, color=(255, 100, 100), trailColor=(255, 100, 100), particleDensity=50, image=sprites['projectile_machinegun']))
+    gvrs['bullets'].add(Bullet(origin, destination, spread=0.15, size=[2, 2], velocity=15, damage=1, color=(255, 100, 100), trailColor=(255, 100, 100), particleDensity=50, image=sprites['projectile_machinegun']))
     soundfx['machine_gun_shot'].play()
 
 def frag_bullet_explosion(origin, velocity = 5, amount = 100):
     for i in range(amount):
         bulletPos = [origin[0]+random.randrange(-amount, amount), origin[1]+random.randrange(-amount, amount)]
-        gamevars['bullets'].add(Bullet(origin, bulletPos, velocity=velocity+random.randrange(0, 3), color=gamevars['american_colors'][random.randrange(0, 3)], particleDensity=100))
+        gvrs['bullets'].add(Bullet(origin, bulletPos, velocity=velocity+random.randrange(0, 3), color=gvrs['american_colors'][random.randrange(0, 3)], particleDensity=100))
 
     if options['particles_enabled']:
         for i in range(150):
             colorRange = random.randrange(75, 255)
             randomParticleSize = random.randrange(5, 15)
-            gamevars['particles'].add(Particle((origin[0]+random.randrange(0, 6), origin[1]+random.randrange(0, 6)), [randomParticleSize, randomParticleSize], gamevars['american_colors'][random.randrange(0, 3)], 6, (random.random()+0.1)*2))
+            gvrs['particles'].add(Particle((origin[0]+random.randrange(0, 6), origin[1]+random.randrange(0, 6)), [randomParticleSize, randomParticleSize], gvrs['american_colors'][random.randrange(0, 3)], 6, (random.random()+0.1)*2))
 
     soundfx['frag_cannon_burst'].play()
 
 def frag_cannon_shoot(origin, destination):
-    gamevars['bullets'].add(Bullet(origin, destination, spread=0, size=[15, 15], velocity=10, damage=3, color=(255, 255, 255), trailColor=(255, 255, 255), dieFunc=frag_bullet_explosion, image=sprites['projectile_americanpride']))
+    gvrs['bullets'].add(Bullet(origin, destination, spread=0, size=[15, 15], velocity=10, damage=3, color=(255, 255, 255), trailColor=(255, 255, 255), dieFunc=frag_bullet_explosion, image=sprites['projectile_americanpride']))
     soundfx['frag_cannon_shot'].play()

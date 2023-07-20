@@ -26,4 +26,4 @@ class Particle(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.pos
 
     def draw(self):
-        gamevars['display'].blit(self.image, (self.rect.x, self.rect.y))
+        gvrs['display'].blit(self.image, (self.rect.x, self.rect.y))

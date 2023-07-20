@@ -3,9 +3,16 @@ from data import *
 from entities import *
 from pygame_widgets.button import Button
 
-def init_start_screen():
-    gamevars['test_button'] = Button(
-        gamevars['display'],
+def create_all_widgets():
+    start_wi = gvrs['start_screen_widgets']
+    game_wi = gvrs['game_widgets']
+    settings_wi = gvrs['settings_widgets']
+
+    start_wi += [
+
+        # Start Button
+        Button(
+        gvrs['display'],
         100,
         100,
         150,
@@ -13,179 +20,221 @@ def init_start_screen():
         inactiveColour=(150, 0, 0),
         pressedColour=(100, 0, 0),
         hoverColour=(200, 0, 0),
-        text='test!',
-        onClick=print,
-        onClickParams=('test!')
-        )
-    
-    gamevars['test_button'].hide()
+        text='START',
+        onClick=lambda: transition_state('game', start_wi, game_wi),
+        ),
 
+        # Settings Button
+        Button(
+        gvrs['display'],
+        100,
+        200,
+        150,
+        50,
+        inactiveColour=(150, 0, 0),
+        pressedColour=(100, 0, 0),
+        hoverColour=(200, 0, 0),
+        text='SETTINGS',
+        onClick=lambda: set_game_state('settings')
+        ),
+
+        # Acknowledgments Button
+        Button(
+        gvrs['display'],
+        100,
+        300,
+        150,
+        50,
+        inactiveColour=(150, 0, 0),
+        pressedColour=(100, 0, 0),
+        hoverColour=(200, 0, 0),
+        text='ACKNOWLEDGMENTS',
+        onClick=lambda: set_game_state('acknowledgments')
+        ),
+    ]
+
+    game_wi += [
+        
+    ]
+
+    settings_wi += [
+
+    ]
+
+# Change all required states to fit new game state.
+def transition_state(dest, to_hide, to_show):
+    for widget in to_hide:
+        print(to_hide)
+        widget.hide()
+
+    for widget in to_show:
+        widget.show()
+
+    set_game_state(dest)
+
+# Show start screen widgets.
 def show_start_screen():
-    pass
+    for widget in gvrs['start_screen_widgets']:
+        widget.show()
 
+# Hide start screen widgets
 def hide_start_screen():
-    pass
+    for widget in gvrs['start_screen_widgets']:
+        widget.hide()
 
-def destroy_start_screen():
-    pass
-
+# Operations to be carried out in the start screen.
 def start_screen(f_dat, dest_surf):
     pass
 
+# Set the game state to 'new_state'.
+def set_game_state(new_state):
+    gvrs['game_state'] = new_state
+
+# Return the current game state.
+def get_game_state():
+    return gvrs['game_state']
+
+# Handle all game operations.
 def game(f_dat):
+
     # Handle pausing the game
-    if f_dat['keys'][pygame.K_ESCAPE] and not gamevars['last_paused']:
-        gamevars['game_state'] = 'paused' if not gamevars['game_state'] == 'paused' else 'game'
-        gamevars['last_paused'] = True
-    elif f_dat['keys'][pygame.K_ESCAPE] and gamevars['last_paused']:
-        gamevars['last_paused'] = True
+    if f_dat['keys'][pygame.K_ESCAPE] and not gvrs['last_paused']:
+        set_game_state('paused' if not get_game_state() == 'paused' else 'game')
+        gvrs['last_paused'] = True
+    elif f_dat['keys'][pygame.K_ESCAPE] and gvrs['last_paused']:
+        gvrs['last_paused'] = True
     else:
-        gamevars['last_paused'] = False
+        gvrs['last_paused'] = False
 
     # Handle keyboard input.
     if f_dat['keys'][pygame.K_1]:
-        gamevars['player'].weaponSelect = 0
-        gamevars['overlay'].update_text()
+        gvrs['player'].weaponSelect = 0
     elif f_dat['keys'][pygame.K_2]:
-        gamevars['player'].weaponSelect = 1
-        gamevars['overlay'].update_text()
+        gvrs['player'].weaponSelect = 1
     elif f_dat['keys'][pygame.K_3]:
-        gamevars['player'].weaponSelect = 2
-        gamevars['overlay'].update_text()
+        gvrs['player'].weaponSelect = 2
     elif f_dat['keys'][pygame.K_4]:
-        gamevars['player'].weaponSelect = 3
-        gamevars['overlay'].update_text()
+        gvrs['player'].weaponSelect = 3
     elif f_dat['keys'][pygame.K_5]:
-        gamevars['player'].weaponSelect = 4
-        gamevars['overlay'].update_text()
+        gvrs['player'].weaponSelect = 4
 
     if f_dat['keys'][pygame.K_o]:
-        gamevars['asteroids'].add(Asteroid())
-        gamevars['overlay'].update_text()
-
+        gvrs['asteroids'].add(Asteroid())
     # Handle player shooting weapons.
-    playerWeapon = gamevars['player'].weapons[gamevars['player'].weaponSelect]
+    playerWeapon = gvrs['player'].weapons[gvrs['player'].weaponSelect]
     if f_dat['mouse_pressed'][0]:
         if playerWeapon[4]:
             if f_dat['current_time'] - playerWeapon[5] > playerWeapon[2]:
-                playerWeapon[3](gamevars['player'].rect.center, f_dat['mouse_pos'])
+                playerWeapon[3](gvrs['player'].rect.center, f_dat['mouse_pos'])
                 playerWeapon[5] = f_dat['current_time']
             
         else:
-            if not gamevars['player'].hasShot and f_dat['current_time'] - playerWeapon[5] > playerWeapon[2]:
-                playerWeapon[3](gamevars['player'].rect.center, f_dat['mouse_pos'])
+            if not gvrs['player'].hasShot and f_dat['current_time'] - playerWeapon[5] > playerWeapon[2]:
+                playerWeapon[3](gvrs['player'].rect.center, f_dat['mouse_pos'])
                 playerWeapon[5] = f_dat['current_time']
-                gamevars['player'].hasShot = True
+                gvrs['player'].hasShot = True
 
     else:
-        gamevars['player'].hasShot = False
-
-    # Update weapon cooldown display.
-    gamevars['overlay'].update_weapon_cooldown_display(f_dat['current_time'])
+        gvrs['player'].hasShot = False
 
     # Add asteroids according to waves.
-    if gamevars['waves'][gamevars['wave']]['numAsteroids'] > 0 and gamevars['wave_timer'] > gamevars['waves'][gamevars['wave']]['spawnRate']:
+    if gvrs['waves'][gvrs['current_wave']]['numAsteroids'] > 0 and gvrs['wave_timer'] > gvrs['waves'][gvrs['current_wave']]['spawnRate']:
         
-        gamevars['asteroids'].add(Asteroid(pos=[-95, -95], type="satellite" if random.randrange(0, 100) > 90 else "normal", velocity=[(random.uniform(0.25, 0.75))*6, (random.uniform(0.25, 0.75))*6]))
-        gamevars['overlay'].update_text()
-        gamevars['wave_timer'] = 0
-        gamevars['waves'][gamevars['wave']]['numAsteroids'] -= 1
+        gvrs['asteroids'].add(Asteroid(pos=[-95, -95], type="satellite" if random.randrange(0, 100) > 90 else "normal", velocity=[(random.uniform(0.25, 0.75))*6, (random.uniform(0.25, 0.75))*6]))
+        gvrs['wave_timer'] = 0
+        gvrs['waves'][gvrs['current_wave']]['numAsteroids'] -= 1
     
-    if gamevars['waves'][gamevars['wave']]['numAsteroids'] == 0 and len(gamevars['asteroids']) == 0:
-        gamevars['wave'] += 1
-        gamevars['player'].weapons[0][1] += 200
-        gamevars['player'].weapons[0][1] += 15
-        gamevars['player'].weapons[0][1] += 5
-        gamevars['player'].weapons[0][1] += 200
-        gamevars['player'].weapons[0][1] += 3
+    if gvrs['waves'][gvrs['current_wave']]['numAsteroids'] == 0 and len(gvrs['asteroids']) == 0:
+        gvrs['current_wave'] += 1
+        gvrs['player'].weapons[0][1] += 200
+        gvrs['player'].weapons[0][1] += 15
+        gvrs['player'].weapons[0][1] += 5
+        gvrs['player'].weapons[0][1] += 200
+        gvrs['player'].weapons[0][1] += 3
     else:
-        gamevars['wave_timer'] += 1
+        gvrs['wave_timer'] += 1
 
     # Update all entities.
-    gamevars['particles'].update()
-    gamevars['bullets'].update()
-    gamevars['asteroids'].update()
-    gamevars['player'].update(f_dat['keys'], f_dat['mouse_pos'])
+    gvrs['particles'].update()
+    gvrs['bullets'].update()
+    gvrs['asteroids'].update()
+    gvrs['player'].update(f_dat['keys'], f_dat['mouse_pos'])
 
     # Handle player death.
-    if gamevars['player'].health < 1:
-        gamevars['game_state'] = "gameOver"
-        gamevars['wave'] = 0
-        gamevars['player'] = Player()
-        gamevars['overlay'].update_player_healthbar()
-        gamevars['overlay'].update_text()
-        for asteroid in gamevars['asteroids']:
+    if gvrs['player'].health < 1:
+        set_game_state('gameOver')
+        gvrs['current_wave'] = 0
+        gvrs['player'] = Player()
+        for asteroid in gvrs['asteroids']:
             asteroid.kill()
             del asteroid
 
-        for bullet in gamevars['bullets']:
+        for bullet in gvrs['bullets']:
             bullet.kill()
             del bullet
 
-        for particle in gamevars['particles']:
+        for particle in gvrs['particles']:
             particle.kill()
             del particle
 
     # Draw everything
-    draw_everything(gamevars['display'])
+    draw_everything(gvrs['display'])
 
-def options_menu(f_dat, dest_surf):
+# Operations to be carried out in the settings menu.
+def settings_menu(f_dat, dest_surf):
     dest_surf.blit(sprites['background'], (0, 0))
-    for particle in gamevars['particles']:
+    for particle in gvrs['particles']:
         particle.draw()
 
-    for bullet in gamevars['bullets']:
+    for bullet in gvrs['bullets']:
         bullet.draw()
 
-    gamevars['player'].draw()
-    for asteroid in gamevars['asteroids']:
+    gvrs['player'].draw()
+    for asteroid in gvrs['asteroids']:
         asteroid.draw()
     
-    gamevars['overlay'].draw()
-    if f_dat['keys'][pygame.K_ESCAPE] and not gamevars['last_paused']:
-        gamevars['game_state'] = 'paused' if not gamevars['game_state'] == 'paused' else 'game'
-        gamevars['last_paused'] = True
-    elif f_dat['keys'][pygame.K_ESCAPE] and gamevars['last_paused']:
-        gamevars['last_paused'] = True
+    if f_dat['keys'][pygame.K_ESCAPE] and not gvrs['last_paused']:
+        set_game_state('paused' if not get_game_state() == 'paused' else 'game')
+        gvrs['last_paused'] = True
+    elif f_dat['keys'][pygame.K_ESCAPE] and gvrs['last_paused']:
+        gvrs['last_paused'] = True
     else:
-        gamevars['last_paused'] = False
+        gvrs['last_paused'] = False
 
+# Operations to be carried out in the "game over" screen.
 def game_over_menu(f_dat, dest_surf):
     dest_surf.blit(sprites['background'], (0, 0))
-    for button in gamevars['end_screen_overlay'].buttons:
-        if button[1].collidepoint(f_dat['mouse_pos'][0], f_dat['mouse_pos'][1]):
-            button[0].set_alpha(100)
-        else:
-            button[0].set_alpha(0)
 
-    gamevars['end_screen_overlay'].draw()
-
-    if f_dat['mouse_pressed'][0]: 
-        if gamevars['end_screen_overlay'].buttons[0][1].collidepoint(f_dat['mouse_pos'][0], f_dat['mouse_pos'][1]):
-            gamevars['mouse_image'] = sprites['cursor1']
-            gamevars['game_state'] = 'game'
-
-        elif gamevars['end_screen_overlay'].buttons[1][1].collidepoint(f_dat['mouse_pos'][0], f_dat['mouse_pos'][1]):
-            run = False
-
+# Draw all sprites.
 def draw_everything(dest_surf):
     dest_surf.blit(sprites['background'], (0, 0))
-    for particle in gamevars['particles']:
+    for particle in gvrs['particles']:
         particle.draw()
 
-    for bullet in gamevars['bullets']:
+    for bullet in gvrs['bullets']:
         bullet.draw()
 
-    gamevars['player'].draw()
-    for asteroid in gamevars['asteroids']:
+    gvrs['player'].draw()
+    for asteroid in gvrs['asteroids']:
         asteroid.draw()
-    
-    gamevars['overlay'].draw()
 
-    if gamevars['clock'].get_fps() < 40:
-        for particle in gamevars['particles']:
+    if gvrs['clock'].get_fps() < 40:
+        for particle in gvrs['particles']:
             particle.kill()
             del particle
 
+# Debug state operations.
 def testing_mode(f_data):
     pass
+
+# Load a png sprite with a colorkey
+def load_sprite(name, c_key, custom_c_key=False):
+    sprites[name] = pygame.image.load(f'./res/images/{name}.png').convert(),
+    if c_key:
+        sprites[name].set_colorkey(custom_c_key if custom_c_key else (0, 0, 0))
+
+# Unload the sprite.
+def unload_sprite(name):
+    del sprites[name]
+
+# Change the volume of all sounds.
